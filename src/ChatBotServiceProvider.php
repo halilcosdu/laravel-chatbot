@@ -4,7 +4,6 @@ namespace HalilCosdu\ChatBot;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use HalilCosdu\ChatBot\Commands\ChatBotCommand;
 
 class ChatBotServiceProvider extends PackageServiceProvider
 {
@@ -18,8 +17,11 @@ class ChatBotServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-chatbot')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-chatbot_table')
-            ->hasCommand(ChatBotCommand::class);
+            ->hasMigrations(
+                [
+                    'create_threads_table',
+                    'create_thread_messages_table',
+                ]
+            );
     }
 }

@@ -2,9 +2,9 @@
 
 namespace HalilCosdu\ChatBot\Tests;
 
+use HalilCosdu\ChatBot\ChatBotServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use HalilCosdu\ChatBot\ChatBotServiceProvider;
 
 class TestCase extends Orchestra
 {
