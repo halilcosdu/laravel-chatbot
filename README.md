@@ -45,8 +45,19 @@ return [
 ## Usage
 
 ```php
-$chatBot = new HalilCosdu\ChatBot();
-echo $chatBot->echoPhrase('Hello, HalilCosdu!');
+public function listThreads(mixed $ownerId = null, mixed $search = null, mixed $appends = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+public function createThread(string $subject, mixed $ownerId = null): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
+public function thread(int $id, mixed $ownerId = null): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
+public function updateThread(string $message, int $id, mixed $ownerId = null): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
+public function deleteThread(int $id, mixed $ownerId = null): void
+```
+
+```php
+ChatBot::listThreads();
+ChatBot::createThread('Hello');
+ChatBot::thread($id);
+ChatBot::updateThread('Hi', $id);
+ChatBot::deleteThread(1);
 ```
 
 ## Testing
