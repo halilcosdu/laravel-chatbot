@@ -53,11 +53,11 @@ public function deleteThread(int $id, mixed $ownerId = null): void
 ```
 
 ```php
-ChatBot::listThreads();
-ChatBot::createThread('Hello');
-ChatBot::thread($id);
-ChatBot::updateThread('Hi', $id);
-ChatBot::deleteThread(1);
+ChatBot::listThreads(); /* List all threads */
+ChatBot::createThread('Hello'); /* Create a new thread */
+ChatBot::thread($id); /* Get a thread with messages */
+ChatBot::updateThread('Hi', $id); /* Continue the conversation */
+ChatBot::deleteThread($id); /* Delete the thread */
 ```
 
 ## Testing
