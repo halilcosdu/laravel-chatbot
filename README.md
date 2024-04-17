@@ -30,6 +30,10 @@ php artisan vendor:publish --tag="chatbot-config"
 
 This is the contents of the published config file:
 
+You have to create an assistant on OpenAI and get the API key and assistant ID.
+
+https://platform.openai.com/assistants
+
 ```php
 return [
     'assistant_id' => env('OPENAI_API_ASSISTANT_ID'),
