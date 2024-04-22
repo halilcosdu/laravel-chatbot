@@ -4,21 +4,13 @@ namespace HalilCosdu\ChatBot\Services;
 
 use HalilCosdu\ChatBot\Models\Thread;
 use Illuminate\Support\Sleep;
-use OpenAI as OpenAIFactory;
 use OpenAI\Client;
 
 class ChatBotService
 {
-    public Client $client;
-
-    public function __construct()
+    public function __construct(public Client $client)
     {
-        $this->client = OpenAIFactory::factory()
-            ->withApiKey(config('chatbot.api_key'))
-            ->withOrganization(config('chatbot.organization'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpClient(new \GuzzleHttp\Client(['timeout' => config('chatbot.request_timeout', 30)]))
-            ->make();
+        //
     }
 
     public function index(mixed $ownerId = null, mixed $search = null, mixed $appends = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator
@@ -29,8 +21,6 @@ class ChatBotService
             })
             ->when($ownerId, function ($query) use ($ownerId) {
                 return $query->where('owner_id', $ownerId);
-            }, function ($query) {
-                return $query;
             })
             ->latest()
             ->when($appends, function ($query) use ($appends) {
@@ -85,8 +75,6 @@ class ChatBotService
             ->with('threadMessages')
             ->when($ownerId, function ($query) use ($ownerId) {
                 return $query->where('owner_id', $ownerId);
-            }, function ($query) {
-                return $query;
             })
             ->findOrFail($id);
     }
@@ -140,8 +128,6 @@ class ChatBotService
         $thread = Thread::query()
             ->when($ownerId, function ($query) use ($ownerId) {
                 return $query->where('owner_id', $ownerId);
-            }, function ($query) {
-                return $query;
             })
             ->findOrFail($id);
 

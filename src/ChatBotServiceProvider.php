@@ -2,6 +2,9 @@
 
 namespace HalilCosdu\ChatBot;
 
+use HalilCosdu\ChatBot\Services\ChatBotService;
+use InvalidArgumentException;
+use OpenAI as OpenAIFactory;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -23,5 +26,28 @@ class ChatBotServiceProvider extends PackageServiceProvider
                     'create_thread_messages_table',
                 ]
             );
+    }
+
+    public function packageRegistered(): void
+    {
+        $this->app->singleton(ChatBotService::class, function ($app) {
+            $apiKey = config('chatbot.api_key');
+            $organization = config('chatbot.organization');
+            $timeout = config('chatbot.request_timeout', 30);
+
+            if (! is_string($apiKey) || ($organization !== null && ! is_string($organization))) {
+                throw new InvalidArgumentException(
+                    'The OpenAI API Key is missing. Please publish the [chatbot.php] configuration file and set the [api_key].'
+                );
+            }
+
+            return new ChatBotService(
+                OpenAIFactory::factory()
+                    ->withApiKey($apiKey)
+                    ->withOrganization($organization)
+                    ->withHttpClient(new \GuzzleHttp\Client(['timeout' => $timeout]))
+                    ->make()
+            );
+        });
     }
 }

@@ -14,13 +14,6 @@ You can install the package via composer:
 composer require halilcosdu/laravel-chatbot
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="chatbot-migrations"
-php artisan migrate
-```
-
 You can publish the config file with:
 
 ```bash
@@ -43,6 +36,34 @@ return [
         'thread' => \HalilCosdu\ChatBot\Models\Thread::class,
     ],
 ];
+```
+
+You can publish and run the migrations with:
+
+```bash
+php artisan vendor:publish --tag="chatbot-migrations"
+php artisan migrate
+```
+
+This will migrate the following tables:
+```bash
+Schema::create('threads', function (Blueprint $table) {
+    $table->id();
+    $table->string('owner_id')->nullable()->index();
+    $table->string('subject');
+    $table->string('remote_thread_id')->index();
+
+    $table->timestamps();
+});
+
+Schema::create('thread_messages', function (Blueprint $table) {
+    $table->id();
+    $table->foreignIdFor(config('chatbot.models.thread'))->constrained()->cascadeOnDelete();
+    $table->string('role')->index();
+    $table->longText('content');
+
+    $table->timestamps();
+});
 ```
 
 ## Usage
