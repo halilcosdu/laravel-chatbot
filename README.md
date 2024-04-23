@@ -86,6 +86,11 @@ ChatBot::updateThread('Hi', $id); /* Continue the conversation */
 ChatBot::deleteThread($id); /* Delete the thread */
 ```
 
+![listThreads](https://i.ibb.co/r5DsyfB/Screenshot-2024-04-23-at-21-36-53.png)
+![createThread](https://i.ibb.co/zZC3GCb/Screenshot-2024-04-23-at-21-38-32.png)
+![thread](https://i.ibb.co/sJtcQTY/Screenshot-2024-04-23-at-21-42-47.png)
+![updateThread](https://i.ibb.co/mhyNnWH/Screenshot-2024-04-23-at-21-44-42.png)
+
 ## Testing
 
 ```bash
