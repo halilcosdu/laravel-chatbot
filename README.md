@@ -56,7 +56,8 @@ Schema::create('threads', function (Blueprint $table) {
 
     $table->timestamps();
 });
-
+```
+```bash
 Schema::create('thread_messages', function (Blueprint $table) {
     $table->id();
     $table->foreignIdFor(config('chatbot.models.thread'))->constrained()->cascadeOnDelete();
