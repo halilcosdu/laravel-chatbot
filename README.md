@@ -32,6 +32,7 @@ return [
     'api_key' => env('OPENAI_API_KEY'),
     'organization' => env('OPENAI_ORGANIZATION'),
     'request_timeout' => env('OPENAI_TIMEOUT'),
+    'sleep_seconds' => env('OPENAI_SLEEP_SECONDS'), // Sleep seconds between requests default .1
     'models' => [
         'thread' => \HalilCosdu\ChatBot\Models\Thread::class,
     ],

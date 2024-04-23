@@ -4,6 +4,7 @@ namespace HalilCosdu\ChatBot\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $owner_id
@@ -16,7 +17,7 @@ class Thread extends Model
 
     protected $fillable = ['owner_id', 'subject', 'remote_thread_id'];
 
-    public function threadMessages(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function threadMessages(): HasMany
     {
         return $this->hasMany(ThreadMessage::class);
     }
