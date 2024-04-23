@@ -7,6 +7,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Sleep;
+use Illuminate\Support\Str;
 use OpenAI\Client;
 
 class ChatBotService
@@ -38,7 +39,7 @@ class ChatBotService
 
         $thread = Thread::query()->create([
             'owner_id' => $ownerId,
-            'subject' => $subject,
+            'subject' => Str::words($subject, 10),
             'remote_thread_id' => $remoteThread->id,
         ]);
 
