@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v1.0.4 - 2024-04-24
+
+Subject limited 10 words.
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.0.3...v1.0.4
+
 ## v1.0.3 - 2024-04-23
 
 OpenAI Assistant header added.
