@@ -2,12 +2,15 @@
 
 use HalilCosdu\ChatBot\ChatBot;
 use HalilCosdu\ChatBot\Services\ChatBotService;
+use HalilCosdu\ChatBot\Services\OpenAI\RawService;
 
 beforeEach(function () {
     $chatBotService = Mockery::mock(ChatBotService::class);
-    $chatBot = new ChatBot($chatBotService);
+    $rawService = Mockery::mock(RawService::class);
+    $chatBot = new ChatBot($chatBotService, $rawService);
 
     $this->chatBotService = $chatBotService;
+    $this->rawService = $rawService;
     $this->chatBot = $chatBot;
 });
 
