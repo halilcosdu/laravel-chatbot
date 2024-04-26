@@ -95,7 +95,7 @@ public function listThreadMessagesAsRaw(string $remoteThreadId)
 public function updateThreadAsRaw(string $remoteThreadId, array $data) /* $data = ['role' => 'user or assistant', 'content' => 'Hello'] */
 public function deleteThreadAsRaw(string $remoteThreadId)
 public function threadAsRaw(string $threadId)
-public function messageAsRaw($threadId, $messageId)
+public function messageAsRaw(string $threadId, string $messageId)
 public function modifyMessageAsRaw(string $threadId, string $messageId, array $parameters)
 ```
 
@@ -105,7 +105,7 @@ ChatBot::listThreadMessagesAsRaw(string $remoteThreadId);
 ChatBot::updateThreadAsRaw(string $remoteThreadId, array $data);
 ChatBot::deleteThreadAsRaw(string $remoteThreadId);
 ChatBot::threadAsRaw(string $threadId);
-ChatBot::messageAsRaw($threadId, $messageId);
+ChatBot::messageAsRaw(string $threadId, string $messageId);
 ChatBot::modifyMessageAsRaw(string $threadId, string $messageId, array $parameters);
 ```
 

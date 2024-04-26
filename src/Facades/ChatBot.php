@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \HalilCosdu\ChatBot\ChatBot updateThreadAsRaw(string $remoteThreadId, array $data)
  * @method static \HalilCosdu\ChatBot\ChatBot deleteThreadAsRaw(string $remoteThreadId)
  * @method static \HalilCosdu\ChatBot\ChatBot threadAsRaw(string $threadId)
- * @method static \HalilCosdu\ChatBot\ChatBot messageAsRaw($threadId, $messageId)
+ * @method static \HalilCosdu\ChatBot\ChatBot messageAsRaw(string $threadId,string $messageId)
  * @method static \HalilCosdu\ChatBot\ChatBot modifyMessageAsRaw(string $threadId, string $messageId, array $parameters)
  */
 class ChatBot extends Facade
