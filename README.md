@@ -86,6 +86,29 @@ ChatBot::updateThread('Hi', $id); /* Continue the conversation */
 ChatBot::deleteThread($id); /* Delete the thread */
 ```
 
+### Raw Data - Not Saved to Database
+#### You can use the following methods to interact with the OpenAI API directly.
+
+```php
+public function createThreadAsRaw(string $subject)
+public function listThreadMessagesAsRaw(string $remoteThreadId)
+public function updateThreadAsRaw(string $remoteThreadId, array $data) /* $data = ['role' => 'user or assistant', 'content' => 'Hello'] */
+public function deleteThreadAsRaw(string $remoteThreadId)
+public function threadAsRaw(string $threadId)
+public function messageAsRaw($threadId, $messageId)
+public function modifyMessageAsRaw(string $threadId, string $messageId, array $parameters)
+```
+
+```php
+ChatBot::createThreadAsRaw(string $subject);
+ChatBot::listThreadMessagesAsRaw(string $remoteThreadId);
+ChatBot::updateThreadAsRaw(string $remoteThreadId, array $data);
+ChatBot::deleteThreadAsRaw(string $remoteThreadId);
+ChatBot::threadAsRaw(string $threadId);
+ChatBot::messageAsRaw($threadId, $messageId);
+ChatBot::modifyMessageAsRaw(string $threadId, string $messageId, array $parameters);
+```
+
 ## Testing
 
 ```bash
