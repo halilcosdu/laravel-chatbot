@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v1.1.0 - 2024-04-27
+
+### What's Changed
+
+* Add raw data support for user-defined custom logic. by @halilcosdu in https://github.com/halilcosdu/laravel-chatbot/pull/8
+
+### New Contributors
+
+* @halilcosdu made their first contribution in https://github.com/halilcosdu/laravel-chatbot/pull/8
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.0.4...v1.1.0
+
 ## v1.0.4 - 2024-04-24
 
 Subject limited 10 words.
