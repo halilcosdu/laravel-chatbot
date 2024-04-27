@@ -3,6 +3,7 @@
 namespace HalilCosdu\ChatBot;
 
 use HalilCosdu\ChatBot\Services\ChatBotService;
+use HalilCosdu\ChatBot\Services\OpenAI\RawService;
 use InvalidArgumentException;
 use OpenAI as OpenAIFactory;
 use Spatie\LaravelPackageTools\Package;
@@ -30,25 +31,36 @@ class ChatBotServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singleton(ChatBotService::class, function ($app) {
-            $apiKey = config('chatbot.api_key');
-            $organization = config('chatbot.organization');
-            $timeout = config('chatbot.request_timeout', 30);
+        $this->registerServices();
+    }
 
-            if (! is_string($apiKey) || ($organization !== null && ! is_string($organization))) {
-                throw new InvalidArgumentException(
-                    'The OpenAI API Key is missing. Please publish the [chatbot.php] configuration file and set the [api_key].'
-                );
-            }
+    private function registerServices(): void
+    {
+        $services = [
+            ChatBotService::class,
+            RawService::class,
+        ];
+        foreach ($services as $serviceClass) {
+            $this->app->singleton($serviceClass, function () use ($serviceClass) {
+                $apiKey = config('chatbot.api_key');
+                $organization = config('chatbot.organization');
+                $timeout = config('chatbot.request_timeout', 30);
 
-            return new ChatBotService(
-                OpenAIFactory::factory()
+                if (! is_string($apiKey) || ($organization !== null && ! is_string($organization))) {
+                    throw new InvalidArgumentException(
+                        'The OpenAI API Key is missing. Please publish the [chatbot.php] configuration file and set the [api_key].'
+                    );
+                }
+
+                $openAI = OpenAIFactory::factory()
                     ->withApiKey($apiKey)
                     ->withOrganization($organization)
                     ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
                     ->withHttpClient(new \GuzzleHttp\Client(['timeout' => $timeout]))
-                    ->make()
-            );
-        });
+                    ->make();
+
+                return new $serviceClass($openAI);
+            });
+        }
     }
 }

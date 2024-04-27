@@ -3,15 +3,17 @@
 namespace HalilCosdu\ChatBot\Services;
 
 use HalilCosdu\ChatBot\Models\Thread;
+use HalilCosdu\ChatBot\Traits\WaitsForThreadRunCompletion;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
 use OpenAI\Client;
 
 class ChatBotService
 {
+    use WaitsForThreadRunCompletion;
+
     public function __construct(public Client $client)
     {
         //
@@ -114,14 +116,5 @@ class ChatBotService
         $this->client->threads()->delete($thread->remote_thread_id);
 
         $thread->delete();
-    }
-
-    public function waitForThreadRunCompletion($remoteThreadId, $runId): void
-    {
-        do {
-            Sleep::sleep(config('chatbot.sleep_seconds', .1));
-
-            $run = $this->client->threads()->runs()->retrieve($remoteThreadId, $runId);
-        } while ($run->status !== 'completed');
     }
 }

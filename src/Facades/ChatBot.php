@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Facade;
  * @method static \HalilCosdu\ChatBot\ChatBot thread(int $id, mixed $ownerId = null)
  * @method static \HalilCosdu\ChatBot\ChatBot updateThread(string $message, int $id, mixed $ownerId = null)
  * @method static \HalilCosdu\ChatBot\ChatBot deleteThread(int $id, mixed $ownerId = null)
+ * @method static \HalilCosdu\ChatBot\ChatBot createThreadAsRaw(string $subject)
+ * @method static \HalilCosdu\ChatBot\ChatBot listThreadMessagesAsRaw(string $remoteThreadId)
+ * @method static \HalilCosdu\ChatBot\ChatBot updateThreadAsRaw(string $remoteThreadId, array $data)
+ * @method static \HalilCosdu\ChatBot\ChatBot deleteThreadAsRaw(string $remoteThreadId)
+ * @method static \HalilCosdu\ChatBot\ChatBot threadAsRaw(string $threadId)
+ * @method static \HalilCosdu\ChatBot\ChatBot messageAsRaw(string $threadId,string $messageId)
+ * @method static \HalilCosdu\ChatBot\ChatBot modifyMessageAsRaw(string $threadId, string $messageId, array $parameters)
  */
 class ChatBot extends Facade
 {
