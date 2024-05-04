@@ -3,8 +3,8 @@
 use HalilCosdu\ChatBot\ChatBot;
 use HalilCosdu\ChatBot\Models\Thread;
 use HalilCosdu\ChatBot\Services\ChatBotService;
-use Illuminate\Pagination\LengthAwarePaginator;
 use HalilCosdu\ChatBot\Services\OpenAI\RawService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 beforeEach(function () {
     $chatBotService = mock(ChatBotService::class);
