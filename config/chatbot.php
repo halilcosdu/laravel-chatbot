@@ -1,5 +1,8 @@
 <?php
 
+use HalilCosdu\ChatBot\Models\Thread;
+use HalilCosdu\ChatBot\Models\ThreadMessage;
+
 // config for HalilCosdu/ChatBot
 
 return [
@@ -9,6 +12,7 @@ return [
     'request_timeout' => env('OPENAI_TIMEOUT'),
     'sleep_seconds' => env('OPENAI_SLEEP_SECONDS'),
     'models' => [
-        'thread' => \HalilCosdu\ChatBot\Models\Thread::class,
+        'thread' => env('CHATBOT_THREAD_MODEL', Thread::class),
+        'thread_messages' => env('CHATBOT_THREAD_MESSAGE_MODEL', ThreadMessage::class),
     ],
 ];

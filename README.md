@@ -5,7 +5,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/halilcosdu/laravel-chatbot/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/halilcosdu/laravel-chatbot/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/halilcosdu/laravel-chatbot.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-chatbot)
 
-This package, `laravel-chatbot`, provides a robust and easy-to-use solution for integrating AI chatbots into your Laravel applications. Leveraging the power of OpenAI, it allows you to create, manage, and interact with chat threads directly from your Laravel application. Whether you're building a customer service chatbot or an interactive AI assistant, `laravel-chatbot` offers a streamlined, Laravel-friendly interface to the OpenAI API.
+Laravel Chatbot provides a robust and easy-to-use solution for integrating AI chatbots into your Laravel applications. Leveraging the power of OpenAI, it allows you to create, manage, and interact with chat threads directly from your Laravel application. Whether you're building a customer service chatbot or an interactive AI assistant, `laravel-chatbot` offers a streamlined, Laravel-friendly interface to the OpenAI API.
 ## Installation
 
 You can install the package via composer:
@@ -34,7 +34,10 @@ return [
     'request_timeout' => env('OPENAI_TIMEOUT'),
     'sleep_seconds' => env('OPENAI_SLEEP_SECONDS'), // Sleep seconds between requests default .1
     'models' => [
+        // Thread model must have threadMessages(): HasMany relation
+        // ThreadMessage model mush have thread(): BelongsTo relation
         'thread' => \HalilCosdu\ChatBot\Models\Thread::class,
+        'thread_messages' => \HalilCosdu\ChatBot\Models\ThreadMessage::class
     ],
 ];
 ```
@@ -79,11 +82,10 @@ public function deleteThread(int $id, mixed $ownerId = null): void
 ```
 
 ```php
-ChatBot::listThreads(); /* List all threads */
-ChatBot::createThread('Hello'); /* Create a new thread */
-ChatBot::thread($id); /* Get a thread with messages */
-ChatBot::updateThread('Hi', $id); /* Continue the conversation */
-ChatBot::deleteThread($id); /* Delete the thread */
+ChatBot::listThreads(): LengthAwarePaginator; /* List all threads */
+ChatBot::createThread('Hello, what is the capital of Turkey?'): Model; /* Create a new thread */
+ChatBot::thread($id): Model; /* Get a thread with messages */
+ChatBot::updateThread('Where should I visit?', $id): Model; /* Continue the conversation */ChatBot::deleteThread($id): void; /* Delete the thread */
 ```
 
 ### Raw Data - Not Saved to Database

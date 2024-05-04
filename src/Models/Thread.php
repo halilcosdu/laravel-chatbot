@@ -19,6 +19,6 @@ class Thread extends Model
 
     public function threadMessages(): HasMany
     {
-        return $this->hasMany(ThreadMessage::class);
+        return $this->hasMany(config('chatbot.models.thread_messages', ThreadMessage::class));
     }
 }
