@@ -40,39 +40,27 @@ class ChatBotServiceProvider extends PackageServiceProvider
             ChatBotService::class,
             RawService::class,
         ];
-        foreach ($services as $serviceClass) {
-            $this->app->singleton($serviceClass, function () use ($serviceClass) {
+
+        foreach ($services as $service) {
+            $this->app->singleton($service, function () use ($service) {
                 $apiKey = config('chatbot.api_key');
                 $organization = config('chatbot.organization');
-                $timeout = config('chatbot.request_timeout', 30);
-                $assistantId = config('chatbot.assistant_id');
 
-                $this->validateConfiguration($apiKey, $organization, $timeout, $assistantId);
+                if (! is_string($apiKey) || ($organization !== null && ! is_string($organization))) {
+                    throw new InvalidArgumentException(
+                        'The OpenAI API Key is missing. Please publish the [chatbot.php] configuration file and set the [api_key].'
+                    );
+                }
 
                 $openAI = OpenAIFactory::factory()
                     ->withApiKey($apiKey)
                     ->withOrganization($organization)
                     ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-                    ->withHttpClient(new \GuzzleHttp\Client(['timeout' => intval($timeout)]))
+                    ->withHttpClient(new \GuzzleHttp\Client(['timeout' => config('chatbot.request_timeout', 30)]))
                     ->make();
 
-                return new $serviceClass($openAI);
+                return new $service($openAI);
             });
-        }
-    }
-
-    private function validateConfiguration(string $apiKey, string $organization, int $timeout, string $assistantId): void
-    {
-        if (! is_string($apiKey) || ($organization !== null && ! is_string($organization))) {
-            throw new InvalidArgumentException(
-                'The OpenAI API Key is missing. Please publish the [chatbot.php] configuration file and set the [api_key].'
-            );
-        }
-
-        if (! is_string($assistantId) || ($assistantId !== null && ! is_string($assistantId))) {
-            throw new InvalidArgumentException(
-                'The OpenAI Assistant ID is missing. Please publish the [chatbot.php] configuration file and set the [assistant_id].'
-            );
         }
     }
 }
