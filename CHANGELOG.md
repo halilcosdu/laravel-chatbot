@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v1.2.0 - 2024-05-04
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.0.0 to 2.1.0 by @dependabot in https://github.com/halilcosdu/laravel-chatbot/pull/10
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.1.0...v1.2.0
+
 ## v1.1.0 - 2024-04-27
 
 ### What's Changed
