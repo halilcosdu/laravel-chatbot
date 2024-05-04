@@ -85,7 +85,8 @@ public function deleteThread(int $id, mixed $ownerId = null): void
 ChatBot::listThreads(): LengthAwarePaginator; /* List all threads */
 ChatBot::createThread('Hello, what is the capital of Turkey?'): Model; /* Create a new thread */
 ChatBot::thread($id): Model; /* Get a thread with messages */
-ChatBot::updateThread('Where should I visit?', $id): Model; /* Continue the conversation */ChatBot::deleteThread($id): void; /* Delete the thread */
+ChatBot::updateThread('Where should I visit?', $id): Model; /* Continue the conversation */
+ChatBot::deleteThread($id): void; /* Delete the thread */
 ```
 
 ### Raw Data - Not Saved to Database
