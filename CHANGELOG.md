@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v1.2.1 - 2024-05-04
+
+### What's Changed
+
+* V1.2.0 by @halilcosdu in https://github.com/halilcosdu/laravel-chatbot/pull/11
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.2.0...v1.2.1
+
 ## v1.2.0 - 2024-05-04
 
 ### What's Changed
