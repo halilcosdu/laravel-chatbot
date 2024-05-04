@@ -40,11 +40,11 @@ class ChatBotServiceProvider extends PackageServiceProvider
             ChatBotService::class,
             RawService::class,
         ];
-        foreach ($services as $serviceClass) {
-            $this->app->singleton($serviceClass, function () use ($serviceClass) {
+
+        foreach ($services as $service) {
+            $this->app->singleton($service, function () use ($service) {
                 $apiKey = config('chatbot.api_key');
                 $organization = config('chatbot.organization');
-                $timeout = config('chatbot.request_timeout', 30);
 
                 if (! is_string($apiKey) || ($organization !== null && ! is_string($organization))) {
                     throw new InvalidArgumentException(
@@ -56,10 +56,10 @@ class ChatBotServiceProvider extends PackageServiceProvider
                     ->withApiKey($apiKey)
                     ->withOrganization($organization)
                     ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-                    ->withHttpClient(new \GuzzleHttp\Client(['timeout' => $timeout]))
+                    ->withHttpClient(new \GuzzleHttp\Client(['timeout' => config('chatbot.request_timeout', 30)]))
                     ->make();
 
-                return new $serviceClass($openAI);
+                return new $service($openAI);
             });
         }
     }

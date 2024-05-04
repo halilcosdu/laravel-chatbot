@@ -14,14 +14,16 @@ class ChatBotService
 {
     use WaitsForThreadRunCompletion;
 
+    protected $model = null;
+
     public function __construct(public Client $client)
     {
-        //
+        $this->model = config('chatbot.models.thread', Thread::class);
     }
 
     public function index(mixed $ownerId = null, mixed $search = null, mixed $appends = null): LengthAwarePaginator
     {
-        return Thread::query()
+        return (new $this->model)::query()
             ->when($search, fn ($query) => $query->where('subject', 'like', "%{$search}%"))
             ->when($ownerId, fn ($query) => $query->where('owner_id', $ownerId))
             ->latest()
@@ -39,7 +41,7 @@ class ChatBotService
             ],
         ]);
 
-        $thread = Thread::query()->create([
+        $thread = (new $this->model)::query()->create([
             'owner_id' => $ownerId,
             'subject' => Str::words($subject, 10),
             'remote_thread_id' => $remoteThread->id,
@@ -65,7 +67,7 @@ class ChatBotService
 
     public function show(int $id, mixed $ownerId = null): Model|Builder
     {
-        return Thread::query()
+        return (new $this->model)::query()
             ->with('threadMessages')
             ->when($ownerId, fn ($query) => $query->where('owner_id', $ownerId))
             ->findOrFail($id);
@@ -73,7 +75,7 @@ class ChatBotService
 
     public function update(string $message, int $id, mixed $ownerId = null)
     {
-        $thread = Thread::query()
+        $thread = (new $this->model)::query()
             ->when($ownerId, fn ($query) => $query->where('owner_id', $ownerId))
             ->findOrFail($id);
 
@@ -109,7 +111,7 @@ class ChatBotService
 
     public function delete(int $id, mixed $ownerId = null): void
     {
-        $thread = Thread::query()
+        $thread = (new $this->model)::query()
             ->when($ownerId, fn ($query) => $query->where('owner_id', $ownerId))
             ->findOrFail($id);
 

@@ -19,6 +19,6 @@ class ThreadMessage extends Model
 
     public function thread(): BelongsTo
     {
-        return $this->belongsTo(Thread::class);
+        return $this->belongsTo(config('chatbot.models.thread', Thread::class));
     }
 }
