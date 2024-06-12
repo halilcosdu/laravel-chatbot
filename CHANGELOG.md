@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v1.2.2 - 2024-06-12
+
+### What's Changed
+
+* Update openai-php/laravel requirement from ^0.8.1 to ^0.9.1 by @dependabot in https://github.com/halilcosdu/laravel-chatbot/pull/14
+* Update openai-php/laravel requirement from ^0.9.1 to ^0.10.1 by @dependabot in https://github.com/halilcosdu/laravel-chatbot/pull/15
+* Update model property type by @rashidlaasri in https://github.com/halilcosdu/laravel-chatbot/pull/16
+
+### New Contributors
+
+* @rashidlaasri made their first contribution in https://github.com/halilcosdu/laravel-chatbot/pull/16
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.2.1...v1.2.2
+
 ## v1.2.1 - 2024-05-04
 
 ### What's Changed
