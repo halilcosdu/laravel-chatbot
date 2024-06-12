@@ -55,7 +55,7 @@ class ChatBotServiceProvider extends PackageServiceProvider
                 $openAI = OpenAIFactory::factory()
                     ->withApiKey($apiKey)
                     ->withOrganization($organization)
-                    ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
+                    ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
                     ->withHttpClient(new \GuzzleHttp\Client(['timeout' => config('chatbot.request_timeout', 30)]))
                     ->make();
 
