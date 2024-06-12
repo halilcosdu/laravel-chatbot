@@ -14,7 +14,7 @@ class ChatBotService
 {
     use WaitsForThreadRunCompletion;
 
-    protected ?Model $model = null;
+    protected string $model;
 
     public function __construct(public Client $client)
     {
