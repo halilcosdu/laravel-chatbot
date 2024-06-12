@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v1.2.3 - 2024-06-12
+
+### What's Changed
+
+* Switch from legacy to latest version of Assistants by @rashidlaasri in https://github.com/halilcosdu/laravel-chatbot/pull/18
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.2.2...v1.2.3
+
 ## v1.2.2 - 2024-06-12
 
 ### What's Changed
