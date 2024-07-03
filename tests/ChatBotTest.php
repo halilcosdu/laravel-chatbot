@@ -1,18 +1,26 @@
 <?php
 
 use HalilCosdu\ChatBot\ChatBot;
+use HalilCosdu\ChatBot\Models\Thread;
 use HalilCosdu\ChatBot\Services\ChatBotService;
+use HalilCosdu\ChatBot\Services\OpenAI\RawService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 beforeEach(function () {
-    $chatBotService = Mockery::mock(ChatBotService::class);
-    $chatBot = new ChatBot($chatBotService);
+    $chatBotService = mock(ChatBotService::class);
+    $rawService = mock(RawService::class);
+    $chatBot = new ChatBot($chatBotService, $rawService);
+    $className = config('chatbot.models.thread', Thread::class);
+    $mockedThread = new $className();
 
     $this->chatBotService = $chatBotService;
+    $this->rawService = $rawService;
     $this->chatBot = $chatBot;
+    $this->mockedThread = $mockedThread;
 });
 
 it('lists threads', function () {
-    $mockedThreads = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10);
+    $mockedThreads = new LengthAwarePaginator([], 0, 10);
     $this->chatBotService->shouldReceive('index')->once()->andReturn($mockedThreads);
 
     $result = $this->chatBot->listThreads();
@@ -21,30 +29,27 @@ it('lists threads', function () {
 });
 
 it('creates a thread', function () {
-    $mockedThread = new \HalilCosdu\ChatBot\Models\Thread();
-    $this->chatBotService->shouldReceive('create')->once()->andReturn($mockedThread);
+    $this->chatBotService->shouldReceive('create')->once()->andReturn($this->mockedThread);
 
     $result = $this->chatBot->createThread('subject test');
 
-    expect($result)->toBe($mockedThread);
+    expect($result)->toBe($this->mockedThread);
 });
 
 it('retrieves a thread', function () {
-    $mockedThread = new \HalilCosdu\ChatBot\Models\Thread();
-    $this->chatBotService->shouldReceive('show')->once()->andReturn($mockedThread);
+    $this->chatBotService->shouldReceive('show')->once()->andReturn($this->mockedThread);
 
     $result = $this->chatBot->thread(1);
 
-    expect($result)->toBe($mockedThread);
+    expect($result)->toBe($this->mockedThread);
 });
 
 it('updates a thread', function () {
-    $mockedThread = new \HalilCosdu\ChatBot\Models\Thread();
-    $this->chatBotService->shouldReceive('update')->once()->andReturn($mockedThread);
+    $this->chatBotService->shouldReceive('update')->once()->andReturn($this->mockedThread);
 
     $result = $this->chatBot->updateThread('new message', 1);
 
-    expect($result)->toBe($mockedThread);
+    expect($result)->toBe($this->mockedThread);
 });
 
 it('deletes a thread', function () {

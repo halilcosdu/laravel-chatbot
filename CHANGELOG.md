@@ -2,6 +2,66 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v1.2.3 - 2024-06-12
+
+### What's Changed
+
+* Switch from legacy to latest version of Assistants by @rashidlaasri in https://github.com/halilcosdu/laravel-chatbot/pull/18
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.2.2...v1.2.3
+
+## v1.2.2 - 2024-06-12
+
+### What's Changed
+
+* Update openai-php/laravel requirement from ^0.8.1 to ^0.9.1 by @dependabot in https://github.com/halilcosdu/laravel-chatbot/pull/14
+* Update openai-php/laravel requirement from ^0.9.1 to ^0.10.1 by @dependabot in https://github.com/halilcosdu/laravel-chatbot/pull/15
+* Update model property type by @rashidlaasri in https://github.com/halilcosdu/laravel-chatbot/pull/16
+
+### New Contributors
+
+* @rashidlaasri made their first contribution in https://github.com/halilcosdu/laravel-chatbot/pull/16
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.2.1...v1.2.2
+
+## v1.2.1 - 2024-05-04
+
+### What's Changed
+
+* V1.2.0 by @halilcosdu in https://github.com/halilcosdu/laravel-chatbot/pull/11
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.2.0...v1.2.1
+
+## v1.2.0 - 2024-05-04
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.0.0 to 2.1.0 by @dependabot in https://github.com/halilcosdu/laravel-chatbot/pull/10
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.1.0...v1.2.0
+
+## v1.1.0 - 2024-04-27
+
+### What's Changed
+
+* Add raw data support for user-defined custom logic. by @halilcosdu in https://github.com/halilcosdu/laravel-chatbot/pull/8
+
+### New Contributors
+
+* @halilcosdu made their first contribution in https://github.com/halilcosdu/laravel-chatbot/pull/8
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.0.4...v1.1.0
+
+## v1.0.4 - 2024-04-24
+
+Subject limited 10 words.
+
+**Full Changelog**: https://github.com/halilcosdu/laravel-chatbot/compare/v1.0.3...v1.0.4
+
+## v1.0.3 - 2024-04-23
+
+OpenAI Assistant header added.
+
 ## v1.0.2 - 2024-04-22
 
 v1.0.2, includes the following updates:

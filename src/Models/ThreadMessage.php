@@ -4,6 +4,7 @@ namespace HalilCosdu\ChatBot\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $thread_id
@@ -16,8 +17,8 @@ class ThreadMessage extends Model
 
     protected $fillable = ['thread_id', 'role', 'content'];
 
-    public function thread(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function thread(): BelongsTo
     {
-        return $this->belongsTo(Thread::class);
+        return $this->belongsTo(config('chatbot.models.thread', Thread::class));
     }
 }
