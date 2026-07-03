@@ -5,6 +5,14 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/halilcosdu/laravel-chatbot/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/halilcosdu/laravel-chatbot/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/halilcosdu/laravel-chatbot.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-chatbot)
 
+> ⚠️ **Deprecation notice — OpenAI Assistants API shutdown on 2026-08-26**
+>
+> This package is built on the **OpenAI Assistants API**, which OpenAI deprecated on 2025-08-20 and will **shut down on 2026-08-26**. After that date, the 1.x line of this package will stop working.
+>
+> - A **2.0 release** that migrates to the OpenAI **Responses + Conversations API** is in development, with a stable target of **2026-08-12** (two weeks before shutdown).
+> - Until 2.0 lands, the 1.x line is in **maintenance-only** mode: this release fixes an infinite-loop bug and adds test coverage, but does not add features.
+> - If you are starting a new project, consider waiting for 2.0 or use the Responses API directly.
+
 Laravel Chatbot provides a robust and easy-to-use solution for integrating AI chatbots into your Laravel applications. Leveraging the power of OpenAI, it allows you to create, manage, and interact with chat threads directly from your Laravel application. Whether you're building a customer service chatbot or an interactive AI assistant, `laravel-chatbot` offers a streamlined, Laravel-friendly interface to the OpenAI API.
 ## Installation
 

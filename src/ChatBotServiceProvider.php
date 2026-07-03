@@ -2,6 +2,7 @@
 
 namespace HalilCosdu\ChatBot;
 
+use GuzzleHttp\Client;
 use HalilCosdu\ChatBot\Services\ChatBotService;
 use HalilCosdu\ChatBot\Services\OpenAI\RawService;
 use InvalidArgumentException;
@@ -56,7 +57,7 @@ class ChatBotServiceProvider extends PackageServiceProvider
                     ->withApiKey($apiKey)
                     ->withOrganization($organization)
                     ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-                    ->withHttpClient(new \GuzzleHttp\Client(['timeout' => config('chatbot.request_timeout', 30)]))
+                    ->withHttpClient(new Client(['timeout' => config('chatbot.request_timeout', 30)]))
                     ->make();
 
                 return new $service($openAI);

@@ -8,7 +8,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use OpenAI\Client;
+use OpenAI\Contracts\ClientContract;
 
 class ChatBotService
 {
@@ -16,7 +16,7 @@ class ChatBotService
 
     protected string $model;
 
-    public function __construct(public Client $client)
+    public function __construct(public ClientContract $client)
     {
         $this->model = config('chatbot.models.thread', Thread::class);
     }
