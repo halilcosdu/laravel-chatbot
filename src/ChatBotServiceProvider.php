@@ -3,10 +3,10 @@
 namespace HalilCosdu\ChatBot;
 
 use GuzzleHttp\Client;
-use HalilCosdu\ChatBot\Services\ChatBotService;
-use HalilCosdu\ChatBot\Services\OpenAI\RawService;
+use HalilCosdu\ChatBot\Commands\MigrateToConversationsCommand;
 use InvalidArgumentException;
 use OpenAI as OpenAIFactory;
+use OpenAI\Contracts\ClientContract;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -14,18 +14,15 @@ class ChatBotServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package
             ->name('laravel-chatbot')
             ->hasConfigFile()
+            ->hasCommand(MigrateToConversationsCommand::class)
             ->hasMigrations(
                 [
                     'create_threads_table',
                     'create_thread_messages_table',
+                    'add_remote_conversation_id_to_threads_table',
                 ]
             );
     }
@@ -37,31 +34,21 @@ class ChatBotServiceProvider extends PackageServiceProvider
 
     private function registerServices(): void
     {
-        $services = [
-            ChatBotService::class,
-            RawService::class,
-        ];
+        $this->app->singleton(ClientContract::class, function () {
+            $apiKey = config('chatbot.api_key');
+            $organization = config('chatbot.organization');
 
-        foreach ($services as $service) {
-            $this->app->singleton($service, function () use ($service) {
-                $apiKey = config('chatbot.api_key');
-                $organization = config('chatbot.organization');
+            if (! is_string($apiKey) || ($organization !== null && ! is_string($organization))) {
+                throw new InvalidArgumentException(
+                    'The OpenAI API Key is missing. Please publish the [chatbot.php] configuration file and set the [api_key].'
+                );
+            }
 
-                if (! is_string($apiKey) || ($organization !== null && ! is_string($organization))) {
-                    throw new InvalidArgumentException(
-                        'The OpenAI API Key is missing. Please publish the [chatbot.php] configuration file and set the [api_key].'
-                    );
-                }
-
-                $openAI = OpenAIFactory::factory()
-                    ->withApiKey($apiKey)
-                    ->withOrganization($organization)
-                    ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-                    ->withHttpClient(new Client(['timeout' => config('chatbot.request_timeout', 30)]))
-                    ->make();
-
-                return new $service($openAI);
-            });
-        }
+            return OpenAIFactory::factory()
+                ->withApiKey($apiKey)
+                ->withOrganization($organization)
+                ->withHttpClient(new Client(['timeout' => config('chatbot.request_timeout', 30)]))
+                ->make();
+        });
     }
 }

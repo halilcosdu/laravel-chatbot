@@ -5,120 +5,96 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/halilcosdu/laravel-chatbot/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/halilcosdu/laravel-chatbot/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/halilcosdu/laravel-chatbot.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-chatbot)
 
-> ⚠️ **Deprecation notice — OpenAI Assistants API shutdown on 2026-08-26**
->
-> This package is built on the **OpenAI Assistants API**, which OpenAI deprecated on 2025-08-20 and will **shut down on 2026-08-26**. After that date, the 1.x line of this package will stop working.
->
-> - A **2.0 release** that migrates to the OpenAI **Responses + Conversations API** is in development, with a stable target of **2026-08-12** (two weeks before shutdown).
-> - Until 2.0 lands, the 1.x line is in **maintenance-only** mode: this release fixes an infinite-loop bug and adds test coverage, but does not add features.
-> - If you are starting a new project, consider waiting for 2.0 or use the Responses API directly.
+Laravel Chatbot provides a robust and easy-to-use solution for integrating AI chatbots into your Laravel applications. The 2.x line is built on the **OpenAI Responses + Conversations API** (the replacement for the deprecated Assistants API, which shut down on 2026-08-26). It stores a local transcript of every conversation using Eloquent (`Thread` / `ThreadMessage`) and gives you a fluent, Laravel-friendly facade for creating threads, continuing them, and managing them.
 
-Laravel Chatbot provides a robust and easy-to-use solution for integrating AI chatbots into your Laravel applications. Leveraging the power of OpenAI, it allows you to create, manage, and interact with chat threads directly from your Laravel application. Whether you're building a customer service chatbot or an interactive AI assistant, `laravel-chatbot` offers a streamlined, Laravel-friendly interface to the OpenAI API.
+> Upgrading from 1.x? See [UPGRADE.md](UPGRADE.md).
+
+## Requirements
+
+- PHP 8.2+
+- Laravel 11.29+, 12.12+, or 13.x
+- `openai-php/laravel` ^0.20
+
 ## Installation
-
-You can install the package via composer:
 
 ```bash
 composer require halilcosdu/laravel-chatbot
 ```
 
-You can publish the config file with:
+Publish the config and migrations, then run the migrations:
 
 ```bash
 php artisan vendor:publish --tag="chatbot-config"
-```
-
-This is the contents of the published config file:
-
-You have to create an assistant on OpenAI and get the API key and assistant ID.
-
-https://platform.openai.com/assistants
-
-```php
-return [
-    'assistant_id' => env('OPENAI_API_ASSISTANT_ID'),
-    'api_key' => env('OPENAI_API_KEY'),
-    'organization' => env('OPENAI_ORGANIZATION'),
-    'request_timeout' => env('OPENAI_TIMEOUT'),
-    'sleep_seconds' => env('OPENAI_SLEEP_SECONDS'), // Sleep seconds between requests default .1
-    'models' => [
-        // Thread model must have threadMessages(): HasMany relation
-        // ThreadMessage model mush have thread(): BelongsTo relation
-        'thread' => \HalilCosdu\ChatBot\Models\Thread::class,
-        'thread_messages' => \HalilCosdu\ChatBot\Models\ThreadMessage::class
-    ],
-];
-```
-
-You can publish and run the migrations with:
-
-```bash
 php artisan vendor:publish --tag="chatbot-migrations"
 php artisan migrate
 ```
 
-This will migrate the following tables:
-```bash
-Schema::create('threads', function (Blueprint $table) {
-    $table->id();
-    $table->string('owner_id')->nullable()->index();
-    $table->string('subject');
-    $table->string('remote_thread_id')->index();
+This is the published config file:
 
-    $table->timestamps();
-});
-```
-```bash
-Schema::create('thread_messages', function (Blueprint $table) {
-    $table->id();
-    $table->foreignIdFor(config('chatbot.models.thread'))->constrained()->cascadeOnDelete();
-    $table->string('role')->index();
-    $table->longText('content');
-
-    $table->timestamps();
-});
+```php
+return [
+    'model' => env('OPENAI_MODEL', 'gpt-5.4-mini'),
+    'instructions' => env('OPENAI_INSTRUCTIONS'),
+    'prompt_id' => env('OPENAI_PROMPT_ID'),  // optional; overrides model+instructions
+    'api_key' => env('OPENAI_API_KEY'),
+    'organization' => env('OPENAI_ORGANIZATION'),
+    'request_timeout' => env('OPENAI_TIMEOUT'),
+    'models' => [
+        'thread' => env('CHATBOT_THREAD_MODEL', \HalilCosdu\ChatBot\Models\Thread::class),
+        'thread_messages' => env('CHATBOT_THREAD_MESSAGE_MODEL', \HalilCosdu\ChatBot\Models\ThreadMessage::class),
+    ],
+];
 ```
 
 ## Usage
 
 ```php
-public function listThreads(mixed $ownerId = null, mixed $search = null, mixed $appends = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator
-public function createThread(string $subject, mixed $ownerId = null): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
-public function thread(int $id, mixed $ownerId = null): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
-public function updateThread(string $message, int $id, mixed $ownerId = null): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Builder
-public function deleteThread(int $id, mixed $ownerId = null): void
+use HalilCosdu\ChatBot\Facades\ChatBot;
 ```
+
+### Create a thread
 
 ```php
-ChatBot::listThreads(): LengthAwarePaginator; /* List all threads */
-ChatBot::createThread('Hello, what is the capital of Turkey?'): Model; /* Create a new thread */
-ChatBot::thread($id): Model; /* Get a thread with messages */
-ChatBot::updateThread('Where should I visit?', $id): Model; /* Continue the conversation */
-ChatBot::deleteThread($id): void; /* Delete the thread */
+$thread = ChatBot::createThread('Why is the sky blue?', ownerId: auth()->id());
+// Creates a Conversation, runs a Response against it, and stores the user
+// message + assistant reply as ThreadMessage rows.
 ```
 
-### Raw Data - Not Saved to Database
-#### You can use the following methods to interact with the OpenAI API directly.
+### Continue a thread
 
 ```php
-public function createThreadAsRaw(string $subject)
-public function listThreadMessagesAsRaw(string $remoteThreadId)
-public function updateThreadAsRaw(string $remoteThreadId, array $data) /* $data = ['role' => 'user or assistant', 'content' => 'Hello'] */
-public function deleteThreadAsRaw(string $remoteThreadId)
-public function threadAsRaw(string $threadId)
-public function messageAsRaw(string $threadId, string $messageId)
-public function modifyMessageAsRaw(string $threadId, string $messageId, array $parameters)
+$assistantMessage = ChatBot::updateThread('What about at sunset?', $thread->id);
 ```
 
+### List / show / delete threads
+
 ```php
-ChatBot::createThreadAsRaw(string $subject);
-ChatBot::listThreadMessagesAsRaw(string $remoteThreadId);
-ChatBot::updateThreadAsRaw(string $remoteThreadId, array $data);
-ChatBot::deleteThreadAsRaw(string $remoteThreadId);
-ChatBot::threadAsRaw(string $threadId);
-ChatBot::messageAsRaw(string $threadId, string $messageId);
-ChatBot::modifyMessageAsRaw(string $threadId, string $messageId, array $parameters);
+ChatBot::listThreads(ownerId: auth()->id(), search: 'sky');
+ChatBot::thread($thread->id);
+ChatBot::deleteThread($thread->id);
 ```
+
+### Raw OpenAI access
+
+```php
+ChatBot::createConversationAsRaw();
+ChatBot::conversationAsRaw($conversationId);
+ChatBot::deleteConversationAsRaw($conversationId);
+ChatBot::listConversationItemsAsRaw($conversationId);
+ChatBot::createResponseAsRaw(['model' => 'gpt-5.4-mini', 'input' => [...], 'conversation' => $conversationId]);
+ChatBot::responseAsRaw($responseId);
+```
+
+## Migrating from 1.x (Assistants API)
+
+If you are upgrading an existing 1.x install with data, run the migration command to rebuild each thread's transcript into a new Conversation (the old `thread_*` ids cannot be reused):
+
+```bash
+php artisan chatbot:migrate-to-conversations --dry-run
+php artisan chatbot:migrate-to-conversations
+```
+
+The command is idempotent (skips threads that already have a `remote_conversation_id`), supports `--limit`, and continues on individual failures with a summary.
 
 ## Testing
 
@@ -129,14 +105,6 @@ composer test
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 

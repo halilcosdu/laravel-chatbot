@@ -2,18 +2,17 @@
 
 namespace HalilCosdu\ChatBot\Services;
 
+use HalilCosdu\ChatBot\Exceptions\ChatBotException;
 use HalilCosdu\ChatBot\Models\Thread;
-use HalilCosdu\ChatBot\Traits\WaitsForThreadRunCompletion;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use OpenAI\Contracts\ClientContract;
+use OpenAI\Responses\Responses\CreateResponse;
 
 class ChatBotService
 {
-    use WaitsForThreadRunCompletion;
-
     protected string $model;
 
     public function __construct(public ClientContract $client)
@@ -32,33 +31,31 @@ class ChatBotService
 
     public function create(string $subject, mixed $ownerId = null): Model|Builder
     {
-        $remoteThread = $this->client->threads()->create([
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => $subject,
-                ],
-            ],
-        ]);
+        // Create an empty conversation. The user input is sent through the
+        // Responses API below, which appends both the user input and the
+        // assistant output to the conversation automatically — so we must NOT
+        // also add the user item here (that would duplicate context).
+        $conversation = $this->client->conversations()->create();
 
         $thread = (new $this->model)::query()->create([
             'owner_id' => $ownerId,
             'subject' => Str::words($subject, 10),
-            'remote_thread_id' => $remoteThread->id,
+            'remote_conversation_id' => $conversation->id,
         ]);
 
-        $run = $this->client->threads()->runs()->create($remoteThread->id, [
-            'assistant_id' => config('chatbot.assistant_id'),
+        $response = $this->createResponse($conversation->id, [
+            ['role' => 'user', 'content' => $subject],
         ]);
 
-        $this->waitForThreadRunCompletion($remoteThread->id, $run->id);
+        $thread->threadMessages()->create([
+            'role' => 'user',
+            'content' => $subject,
+        ]);
 
-        foreach ($this->client->threads()->messages()->list($remoteThread->id)->data as $message) {
-            $thread->threadMessages()->create([
-                'role' => $message->role,
-                'content' => $message->content[0]->text->value,
-            ]);
-        }
+        $thread->threadMessages()->create([
+            'role' => 'assistant',
+            'content' => $this->extractAssistantText($response),
+        ]);
 
         $thread->load('threadMessages');
 
@@ -79,34 +76,29 @@ class ChatBotService
             ->when($ownerId, fn ($query) => $query->where('owner_id', $ownerId))
             ->findOrFail($id);
 
+        if (empty($thread->remote_conversation_id)) {
+            throw new ChatBotException(
+                "Thread [{$id}] has no remote_conversation_id. Run `php artisan chatbot:migrate-to-conversations` to migrate it from the legacy Assistants API."
+            );
+        }
+
         $thread->threadMessages()->create([
             'role' => 'user',
             'content' => $message,
         ]);
 
-        $this->client->threads()->messages()->create($thread->remote_thread_id, [
-            'role' => 'user',
-            'content' => $message,
+        $response = $this->createResponse($thread->remote_conversation_id, [
+            ['role' => 'user', 'content' => $message],
         ]);
 
-        $run = $this->client->threads()->runs()->create($thread->remote_thread_id, [
-            'assistant_id' => config('chatbot.assistant_id'),
-        ]);
-
-        $this->waitForThreadRunCompletion($thread->remote_thread_id, $run->id);
-
-        $message = $this->client->threads()->messages()->list($thread->remote_thread_id)->data[0];
-
-        $thread->threadMessages()->create([
-            'role' => $message->role,
-            'content' => $message->content[0]->text->value,
+        $assistantMessage = $thread->threadMessages()->create([
+            'role' => 'assistant',
+            'content' => $this->extractAssistantText($response),
         ]);
 
         $thread->load('threadMessages');
 
-        $thread = $thread->refresh();
-
-        return $thread->threadMessages->last();
+        return $assistantMessage;
     }
 
     public function delete(int $id, mixed $ownerId = null): void
@@ -115,8 +107,56 @@ class ChatBotService
             ->when($ownerId, fn ($query) => $query->where('owner_id', $ownerId))
             ->findOrFail($id);
 
-        $this->client->threads()->delete($thread->remote_thread_id);
+        if (! empty($thread->remote_conversation_id)) {
+            $this->client->conversations()->delete($thread->remote_conversation_id);
+        }
 
         $thread->delete();
+    }
+
+    /**
+     * Create a Responses API call bound to a stored conversation.
+     *
+     * @param  array<int, array{role: string, content: string}>  $input
+     */
+    protected function createResponse(string $conversationId, array $input): CreateResponse
+    {
+        $parameters = [
+            'input' => $input,
+            'conversation' => $conversationId,
+        ];
+
+        if ($promptId = config('chatbot.prompt_id')) {
+            $parameters['prompt'] = ['id' => $promptId];
+        } else {
+            $parameters['model'] = config('chatbot.model', 'gpt-5.4-mini');
+            if ($instructions = config('chatbot.instructions')) {
+                $parameters['instructions'] = $instructions;
+            }
+        }
+
+        return $this->client->responses()->create($parameters);
+    }
+
+    /**
+     * Pull the assistant's text output from a completed response.
+     */
+    protected function extractAssistantText(CreateResponse $response): string
+    {
+        if ($response->status !== 'completed') {
+            $error = $response->error !== null
+                ? $response->error->message
+                : "Response ended with status [{$response->status}].";
+
+            throw new ChatBotException("OpenAI response did not complete successfully: {$error}");
+        }
+
+        $text = $response->outputText;
+
+        if ($text === null || trim($text) === '') {
+            throw new ChatBotException('OpenAI response completed without any text output.');
+        }
+
+        return $text;
     }
 }

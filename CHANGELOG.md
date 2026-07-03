@@ -2,6 +2,34 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v2.0.0 - 2026-07-03
+
+The 2.x line migrates from the **OpenAI Assistants API** (shut down on **2026-08-26**) to the **Responses + Conversations API**. This is a breaking change. See [UPGRADE.md](UPGRADE.md).
+
+### Changed
+- **Backbone**: threads/runs/messages → **Responses + Conversations API** (`openai-php/laravel ^0.20`). Responses are synchronous, so the run-polling loop is gone entirely.
+- **Requirements**: PHP 8.2+, Laravel 11.29/12.12/13 (Laravel 10 dropped — openai-php ^0.20 does not support it).
+- **Config**: `assistant_id`/`sleep_seconds`/`run_max_attempts` removed; added `model` (default `gpt-5.4-mini`), `instructions`, and optional `prompt_id`.
+- **Thread model**: new nullable `remote_conversation_id` column; `remote_thread_id` kept as a legacy migration source (not backfilled).
+- **RawService**: renamed Assistants-thread methods to Conversation methods (`createConversationAsRaw`, `conversationAsRaw`, `updateConversationAsRaw`, `deleteConversationAsRaw`, `listConversationItemsAsRaw`) and added Response raw methods (`createResponseAsRaw`, `responseAsRaw`).
+- `ChatBotService`/`RawService` now resolve the shared `OpenAI\Contracts\ClientContract` singleton from the container.
+- Dropped the `OpenAI-Beta: assistants=v2` header.
+
+### Added
+- `chatbot:migrate-to-conversations` command — idempotent, `--dry-run`, `--limit`; rebuilds each thread's local transcript into a new Conversation.
+- `HalilCosdu\ChatBot\Exceptions\ChatBotException` — thrown on failed/incomplete/no-text responses, and when `update()` is called on a thread without a `remote_conversation_id`.
+- Migration stub `add_remote_conversation_id_to_threads_table`.
+- `UPGRADE.md`.
+- `ThreadFactory` / `ThreadMessageFactory` for testing.
+- Tests for the migration command (dry-run paths). Test suite: 5 → 8.
+
+### Removed
+- `WaitsForThreadRunCompletion` trait and `HalilCosdu\ChatBot\Exceptions\ThreadRunException` — Responses are synchronous, no run polling.
+- `RawService` Assistants-thread methods (replaced — see UPGRADE).
+
+### Out of scope (deferred to 2.1)
+Streaming, background responses, tool/function loops, prompt variables, richer conversation-item storage, lazy per-thread migration. Dropping the `remote_thread_id` column is deferred to a future major.
+
 ## v1.3.1 - 2026-07-03
 
 > **Maintenance-only release.** The 1.x line is built on the OpenAI Assistants API, which shuts down on **2026-08-26**. A **2.0** migration to the Responses + Conversations API is in development (target stable 2026-08-12). Until then, 1.x receives only critical fixes.

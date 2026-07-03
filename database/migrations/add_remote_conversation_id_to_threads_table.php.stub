@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('threads', function (Blueprint $table) {
+            if (! Schema::hasColumn('threads', 'remote_conversation_id')) {
+                // New Responses/Conversations API id. Not backfilled from
+                // remote_thread_id (a thread_* id is not a conv_* id); populate
+                // it via `php artisan chatbot:migrate-to-conversations`.
+                $table->string('remote_conversation_id')->nullable()->index()->after('subject');
+            }
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('threads', function (Blueprint $table) {
+            $table->dropColumn('remote_conversation_id');
+        });
+    }
+};
