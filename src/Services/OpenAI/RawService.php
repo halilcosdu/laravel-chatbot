@@ -3,7 +3,7 @@
 namespace HalilCosdu\ChatBot\Services\OpenAI;
 
 use HalilCosdu\ChatBot\Traits\WaitsForThreadRunCompletion;
-use OpenAI\Client;
+use OpenAI\Contracts\ClientContract;
 use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
 use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use OpenAI\Responses\Threads\ThreadDeleteResponse;
@@ -13,7 +13,7 @@ class RawService
 {
     use WaitsForThreadRunCompletion;
 
-    public function __construct(public Client $client)
+    public function __construct(public ClientContract $client)
     {
         //
     }

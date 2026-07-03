@@ -11,7 +11,7 @@ beforeEach(function () {
     $rawService = mock(RawService::class);
     $chatBot = new ChatBot($chatBotService, $rawService);
     $className = config('chatbot.models.thread', Thread::class);
-    $mockedThread = new $className();
+    $mockedThread = new $className;
 
     $this->chatBotService = $chatBotService;
     $this->rawService = $rawService;

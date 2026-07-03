@@ -2,6 +2,26 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v1.3.1 - 2026-07-03
+
+> **Maintenance-only release.** The 1.x line is built on the OpenAI Assistants API, which shuts down on **2026-08-26**. A **2.0** migration to the Responses + Conversations API is in development (target stable 2026-08-12). Until then, 1.x receives only critical fixes.
+
+### Fixed
+- **`WaitsForThreadRunCompletion` no longer loops forever.** The run poller is now bounded by `run_max_attempts` (default 600) and throws `HalilCosdu\ChatBot\Exceptions\ThreadRunException` on terminal failure statuses (`failed`, `cancelled`, `expired`, `incomplete`), on `requires_action` (unsupported — tool-output submission is out of scope), and on timeout. Previously a run that never reached `completed` would poll indefinitely.
+
+### Changed
+- **CI** now tests PHP 8.4 (matrix: 8.2/8.3/8.4 × Laravel 11/12/13). Note: `openai-php/laravel` does not support Laravel 10, so Laravel 10 is not in the matrix despite the broad `illuminate/contracts` constraint.
+- Bumped GitHub Actions: `actions/checkout` v6, `stefanzweifel/git-auto-commit-action` v7, `dependabot/fetch-metadata` v3.0.0, `ad-m/github-push-action` v1.0.0. Supersedes dependabot #36, #38, #40, #41. The `openai-php/laravel` bump (#39) is deferred to v2.
+- **PHPStan was broken** by an invalid `checkMissingIterableValueType` option; removed and baseline regenerated.
+- `ChatBotService` and `RawService` now type-hint `OpenAI\Contracts\ClientContract` instead of the final concrete `Client`, so they can be substituted/faked in tests.
+
+### Added
+- Test coverage for `WaitsForThreadRunCompletion` (completed / terminal failure / `requires_action` / timeout / continued polling). 8 → 13 tests.
+- New config key `run_max_attempts` (default 600).
+
+### Documentation
+- README: prominent deprecation banner pointing at the 2026-08-26 shutdown and the upcoming v2.
+
 ## v1.3.0 - 2026-04-09
 
 ### What's Changed
