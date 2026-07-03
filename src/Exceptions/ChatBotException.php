@@ -4,4 +4,4 @@ namespace HalilCosdu\ChatBot\Exceptions;
 
 use RuntimeException;
 
-class ThreadRunException extends RuntimeException {}
+class ChatBotException extends RuntimeException {}

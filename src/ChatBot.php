@@ -7,10 +7,11 @@ use HalilCosdu\ChatBot\Services\OpenAI\RawService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
-use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
-use OpenAI\Responses\Threads\ThreadDeleteResponse;
-use OpenAI\Responses\Threads\ThreadResponse;
+use OpenAI\Responses\Conversations\ConversationDeletedResponse;
+use OpenAI\Responses\Conversations\ConversationItemList;
+use OpenAI\Responses\Conversations\ConversationResponse;
+use OpenAI\Responses\Responses\CreateResponse;
+use OpenAI\Responses\Responses\RetrieveResponse;
 
 readonly class ChatBot
 {
@@ -34,7 +35,7 @@ readonly class ChatBot
         return $this->chatBotService->show($id, $ownerId);
     }
 
-    public function updateThread(string $message, int $id, mixed $ownerId = null): Model|Builder
+    public function updateThread(string $message, int $id, mixed $ownerId = null)
     {
         return $this->chatBotService->update($message, $id, $ownerId);
     }
@@ -44,39 +45,38 @@ readonly class ChatBot
         $this->chatBotService->delete($id, $ownerId);
     }
 
-    public function createThreadAsRaw(string $subject): ThreadResponse
+    public function createConversationAsRaw(array $parameters = []): ConversationResponse
     {
-        return $this->rawService->createThreadAsRaw($subject);
+        return $this->rawService->createConversationAsRaw($parameters);
     }
 
-    public function threadAsRaw(string $threadId): ThreadResponse
+    public function conversationAsRaw(string $conversationId): ConversationResponse
     {
-        return $this->rawService->threadAsRaw($threadId);
+        return $this->rawService->conversationAsRaw($conversationId);
     }
 
-    public function messageAsRaw($threadId, $messageId): ThreadMessageResponse
+    public function updateConversationAsRaw(string $conversationId, array $parameters): ConversationResponse
     {
-        return $this->rawService->messageAsRaw($threadId, $messageId);
+        return $this->rawService->updateConversationAsRaw($conversationId, $parameters);
     }
 
-    public function modifyMessageAsRaw(string $threadId, string $messageId, array $parameters): ThreadMessageResponse
+    public function deleteConversationAsRaw(string $conversationId): ConversationDeletedResponse
     {
-        return $this->rawService->modifyMessageAsRaw($threadId, $messageId, $parameters);
+        return $this->rawService->deleteConversationAsRaw($conversationId);
     }
 
-    public function listThreadMessagesAsRaw(string $remoteThreadId): ThreadMessageListResponse
+    public function listConversationItemsAsRaw(string $conversationId): ConversationItemList
     {
-        return $this->rawService->listThreadMessagesAsRaw($remoteThreadId);
-
+        return $this->rawService->listConversationItemsAsRaw($conversationId);
     }
 
-    public function updateThreadAsRaw(string $remoteThreadId, array $data): ThreadResponse
+    public function createResponseAsRaw(array $parameters): CreateResponse
     {
-        return $this->rawService->updateThreadAsRaw($remoteThreadId, $data);
+        return $this->rawService->createResponseAsRaw($parameters);
     }
 
-    public function deleteThreadAsRaw(string $remoteThreadId): ThreadDeleteResponse
+    public function responseAsRaw(string $responseId): RetrieveResponse
     {
-        return $this->rawService->deleteThreadAsRaw($remoteThreadId);
+        return $this->rawService->responseAsRaw($responseId);
     }
 }

@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $owner_id
  * @property string $subject
- * @property string $remote_thread_id
+ * @property string|null $remote_conversation_id
+ * @property string|null $remote_thread_id Legacy Assistants API id; kept for the v1 -> v2 migration only.
  */
 class Thread extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['owner_id', 'subject', 'remote_thread_id'];
+    protected $fillable = ['owner_id', 'subject', 'remote_conversation_id', 'remote_thread_id'];
 
     public function threadMessages(): HasMany
     {

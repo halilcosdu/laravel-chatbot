@@ -27,10 +27,18 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        config()->set('chatbot.api_key', 'test-key');
+        config()->set('chatbot.model', 'gpt-5.4-mini');
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_laravel-chatbot_table.php.stub';
-        $migration->up();
-        */
+        $migrations = [
+            'create_threads_table',
+            'create_thread_messages_table',
+            'add_remote_conversation_id_to_threads_table',
+        ];
+
+        foreach ($migrations as $migration) {
+            $instance = include __DIR__."/../database/migrations/{$migration}.php.stub";
+            $instance->up();
+        }
     }
 }

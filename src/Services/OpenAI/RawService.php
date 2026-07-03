@@ -2,77 +2,52 @@
 
 namespace HalilCosdu\ChatBot\Services\OpenAI;
 
-use HalilCosdu\ChatBot\Traits\WaitsForThreadRunCompletion;
 use OpenAI\Contracts\ClientContract;
-use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
-use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
-use OpenAI\Responses\Threads\ThreadDeleteResponse;
-use OpenAI\Responses\Threads\ThreadResponse;
+use OpenAI\Responses\Conversations\ConversationDeletedResponse;
+use OpenAI\Responses\Conversations\ConversationItemList;
+use OpenAI\Responses\Conversations\ConversationResponse;
+use OpenAI\Responses\Responses\CreateResponse;
+use OpenAI\Responses\Responses\RetrieveResponse;
 
 class RawService
 {
-    use WaitsForThreadRunCompletion;
-
     public function __construct(public ClientContract $client)
     {
         //
     }
 
-    public function createThreadAsRaw(string $subject): ThreadResponse
+    public function createConversationAsRaw(array $parameters = []): ConversationResponse
     {
-        $remoteThread = $this->client->threads()->create([
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => $subject,
-                ],
-            ],
-        ]);
-
-        $run = $this->client->threads()->runs()->create($remoteThread->id, [
-            'assistant_id' => config('chatbot.assistant_id'),
-        ]);
-
-        $this->waitForThreadRunCompletion($remoteThread->id, $run->id);
-
-        return $this->client->threads()->retrieve($remoteThread->id);
+        return $this->client->conversations()->create($parameters);
     }
 
-    public function threadAsRaw(string $threadId): ThreadResponse
+    public function conversationAsRaw(string $conversationId): ConversationResponse
     {
-        return $this->client->threads()->retrieve($threadId);
+        return $this->client->conversations()->retrieve($conversationId);
     }
 
-    public function listThreadMessagesAsRaw(string $remoteThreadId): ThreadMessageListResponse
+    public function updateConversationAsRaw(string $conversationId, array $parameters): ConversationResponse
     {
-        return $this->client->threads()->messages()->list($remoteThreadId);
+        return $this->client->conversations()->update($conversationId, $parameters);
     }
 
-    public function messageAsRaw($threadId, $messageId): ThreadMessageResponse
+    public function deleteConversationAsRaw(string $conversationId): ConversationDeletedResponse
     {
-        return $this->client->threads()->messages()->retrieve($threadId, $messageId);
+        return $this->client->conversations()->delete($conversationId);
     }
 
-    public function modifyMessageAsRaw(string $threadId, string $messageId, array $parameters): ThreadMessageResponse
+    public function listConversationItemsAsRaw(string $conversationId, array $parameters = []): ConversationItemList
     {
-        return $this->client->threads()->messages()->modify($threadId, $messageId, $parameters);
+        return $this->client->conversations()->items()->list($conversationId, $parameters);
     }
 
-    public function updateThreadAsRaw(string $remoteThreadId, array $data): ThreadResponse
+    public function createResponseAsRaw(array $parameters): CreateResponse
     {
-        $this->client->threads()->messages()->create($remoteThreadId, $data);
-
-        $run = $this->client->threads()->runs()->create($remoteThreadId, [
-            'assistant_id' => config('chatbot.assistant_id'),
-        ]);
-
-        $this->waitForThreadRunCompletion($remoteThreadId, $run->id);
-
-        return $this->client->threads()->retrieve($remoteThreadId);
+        return $this->client->responses()->create($parameters);
     }
 
-    public function deleteThreadAsRaw(string $remoteThreadId): ThreadDeleteResponse
+    public function responseAsRaw(string $responseId): RetrieveResponse
     {
-        return $this->client->threads()->delete($remoteThreadId);
+        return $this->client->responses()->retrieve($responseId);
     }
 }
