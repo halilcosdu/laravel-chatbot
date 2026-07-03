@@ -2,6 +2,11 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v2.0.1 - 2026-07-03
+
+### Added
+- **Service-layer test coverage** deferred from v2.0.0. `Http`/openai `ClientFake` + `Response::from` fixture-backed tests for `ChatBotService` (create / update / delete / failure paths / unmigrated-thread guard) and `RawService` (conversation create/retrieve/delete + response create). Suite: 8 → 17 tests.
+
 ## v2.0.0 - 2026-07-03
 
 The 2.x line migrates from the **OpenAI Assistants API** (shut down on **2026-08-26**) to the **Responses + Conversations API**. This is a breaking change. See [UPGRADE.md](UPGRADE.md).
