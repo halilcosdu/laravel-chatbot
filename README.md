@@ -1,9 +1,6 @@
 # Laravel Chatbot
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/halilcosdu/laravel-chatbot.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-chatbot)
-[![Compatibility](https://img.shields.io/github/actions/workflow/status/halilcosdu/laravel-chatbot/run-tests.yml?branch=main&label=compatibility&style=flat-square)](https://github.com/halilcosdu/laravel-chatbot/actions/workflows/run-tests.yml)
-[![PHPStan](https://img.shields.io/github/actions/workflow/status/halilcosdu/laravel-chatbot/phpstan.yml?branch=main&label=phpstan&style=flat-square)](https://github.com/halilcosdu/laravel-chatbot/actions/workflows/phpstan.yml)
-[![Code Style](https://img.shields.io/github/actions/workflow/status/halilcosdu/laravel-chatbot/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/halilcosdu/laravel-chatbot/actions/workflows/fix-php-code-style-issues.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/halilcosdu/laravel-chatbot.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-chatbot)
 [![License](https://img.shields.io/packagist/l/halilcosdu/laravel-chatbot.svg?style=flat-square)](LICENSE.md)
 
