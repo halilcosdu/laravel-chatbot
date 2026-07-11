@@ -4,6 +4,7 @@ namespace HalilCosdu\ChatBot\Tests;
 
 use HalilCosdu\ChatBot\ChatBotServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -29,6 +30,8 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
         config()->set('chatbot.api_key', 'test-key');
         config()->set('chatbot.model', 'gpt-5.4-mini');
+
+        Schema::enableForeignKeyConstraints();
 
         $migrations = [
             'create_threads_table',

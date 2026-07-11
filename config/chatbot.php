@@ -3,8 +3,6 @@
 use HalilCosdu\ChatBot\Models\Thread;
 use HalilCosdu\ChatBot\Models\ThreadMessage;
 
-// config for HalilCosdu/ChatBot
-
 return [
     /*
     | The OpenAI model used for responses. Required.
@@ -28,7 +26,15 @@ return [
 
     'api_key' => env('OPENAI_API_KEY'),
     'organization' => env('OPENAI_ORGANIZATION'),
-    'request_timeout' => env('OPENAI_TIMEOUT'),
+    'project' => env('OPENAI_PROJECT'),
+    'request_timeout' => (int) env('OPENAI_TIMEOUT', 30),
+
+    /*
+    | Default Responses API parameters merged into every managed response.
+    | Per-call options may override these values. The package always controls
+    | `input`, `conversation`, and `stream` for managed thread operations.
+    */
+    'response_options' => [],
 
     'models' => [
         'thread' => env('CHATBOT_THREAD_MODEL', Thread::class),

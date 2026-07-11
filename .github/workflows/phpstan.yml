@@ -2,27 +2,47 @@ name: PHPStan
 
 on:
   push:
+    branches: [main]
     paths:
       - '**.php'
+      - '**.stub'
+      - 'composer.json'
       - 'phpstan.neon.dist'
       - '.github/workflows/phpstan.yml'
+  pull_request:
+    paths:
+      - '**.php'
+      - '**.stub'
+      - 'composer.json'
+      - 'phpstan.neon.dist'
+      - '.github/workflows/phpstan.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phpstan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   phpstan:
     name: phpstan
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.5'
           coverage: none
 
-      - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:^13.0" "orchestra/testbench:^11.0" --no-interaction --no-update
+          composer update --prefer-dist --no-interaction --no-progress
 
       - name: Run PHPStan
-        run: ./vendor/bin/phpstan --error-format=github
+        run: ./vendor/bin/phpstan --error-format=github --memory-limit=1G --no-progress

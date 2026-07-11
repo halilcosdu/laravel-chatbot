@@ -7,7 +7,9 @@ use OpenAI\Responses\Conversations\ConversationDeletedResponse;
 use OpenAI\Responses\Conversations\ConversationItemList;
 use OpenAI\Responses\Conversations\ConversationResponse;
 use OpenAI\Responses\Responses\CreateResponse;
+use OpenAI\Responses\Responses\CreateStreamedResponse;
 use OpenAI\Responses\Responses\RetrieveResponse;
+use OpenAI\Responses\StreamResponse;
 
 class RawService
 {
@@ -44,6 +46,14 @@ class RawService
     public function createResponseAsRaw(array $parameters): CreateResponse
     {
         return $this->client->responses()->create($parameters);
+    }
+
+    /**
+     * @return StreamResponse<CreateStreamedResponse>
+     */
+    public function createResponseStreamedAsRaw(array $parameters): StreamResponse
+    {
+        return $this->client->responses()->createStreamed($parameters);
     }
 
     public function responseAsRaw(string $responseId): RetrieveResponse

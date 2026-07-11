@@ -1,27 +1,27 @@
 # Security Policy
 
-## Supported Versions
+## Supported versions
 
-Use this section to tell people about which versions of your project are currently being supported with security updates.
+Security fixes are released on the latest 2.x minor and patch line.
 
-| Version | Supported          |
-|---------| ------------------ |
-| 1.0.x   | :white_check_mark: |
+| Version | Security support |
+| --- | --- |
+| Latest 2.x | Supported |
+| Older 2.x releases | Upgrade to the latest 2.x release |
+| 1.x and earlier | End of life |
 
-## Reporting a Vulnerability
+Version 1.x depends on OpenAI's deprecated Assistants API and is no longer maintained. Applications should migrate to the Responses + Conversations based 2.x line.
 
-Use this section to tell people how to report a vulnerability.
+## Reporting a vulnerability
 
-If you discover a security vulnerability within this project, please send an email to halilcosdu@gmail.com. All security vulnerabilities will be promptly addressed.
+Please report suspected vulnerabilities privately. Do not open a public issue or discussion.
 
-Please do not publicly disclose the issue until it has been addressed by the team.
+Email `halilcosdu@gmail.com` with the subject `laravel-chatbot security report`.
 
-## Security Updates
+Include the affected package version, PHP and Laravel versions, impact, reproduction steps, and any proposed remediation. Remove API keys, access tokens, personal data, and production transcripts from the report.
 
-Use this section to tell people where and how they will receive updates about security.
+You will receive an acknowledgement as soon as practical. Please allow time to validate, patch, test, and publish a coordinated fix before public disclosure.
 
-We will push the updates for security vulnerabilities to the main branch of this repository. We recommend always using the latest stable version of the project.
+## Security updates
 
-## More Information
-
-If you have any other questions, please contact us at halilcosdu@gmail.com.
+Security releases are published as GitHub releases and Packagist versions. Keep Composer dependencies current and monitor this repository's security advisories and release notes.
