@@ -2,8 +2,8 @@
 
 namespace HalilCosdu\ChatBot\Commands;
 
+use HalilCosdu\ChatBot\Services\ChatBotService;
 use Illuminate\Console\Command;
-use OpenAI\Contracts\ClientContract;
 
 class MigrateToConversationsCommand extends Command
 {
@@ -13,8 +13,9 @@ class MigrateToConversationsCommand extends Command
 
     public $description = 'Migrate legacy Assistants-API threads to Responses/Conversations using the local transcript.';
 
-    public function handle(ClientContract $client): int
+    public function handle(ChatBotService $service): int
     {
+        $client = $service->client;
         $model = config('chatbot.models.thread');
         $dryRun = (bool) $this->option('dry-run');
         $limit = $this->option('limit') !== null ? (int) $this->option('limit') : null;

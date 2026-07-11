@@ -2,6 +2,37 @@
 
 All notable changes to `laravel-chatbot` will be documented in this file.
 
+## v2.1.0 - 2026-07-11
+
+### Added
+- **Managed Responses API streaming** for both new and existing conversations through `createThreadStreamed()` and `updateThreadStreamed()`.
+- `StreamedThreadResponse`, a single-use iterable that exposes its local thread immediately, yields text deltas, and exposes the persisted assistant message after successful completion.
+- Raw response streaming through `createResponseStreamedAsRaw()`.
+- Per-request Responses API options on synchronous and streamed managed methods, plus global `response_options` configuration. Managed input, conversation, and stream state remain protected.
+- Optional `OPENAI_PROJECT` support.
+- A package-isolated OpenAI client binding so the chatbot no longer overrides `openai-php/laravel`'s application-wide `ClientContract` singleton.
+- Package model factories can now be resolved directly outside the test suite.
+
+### Compatibility
+- Added PHP 8.5 to the supported CI matrix for Laravel 12 and 13.
+- The compatibility matrix now follows Laravel's official PHP ranges: Laravel 11 on PHP 8.2–8.4, Laravel 12 on 8.2–8.5, and Laravel 13 on 8.3–8.5.
+- Laravel 11 remains an explicitly documented legacy target after its March 2026 upstream security end-of-life; only those CI jobs bypass Composer's advisory resolver block.
+- Modernized development dependencies for Laravel 13, Testbench 11, Pest 4, and PHPUnit 12 while preserving the lower Laravel/PHP combinations.
+
+### Fixed
+- Owner ID `0` is now scoped correctly instead of being treated as an absent owner filter.
+- `OPENAI_TIMEOUT` now has an effective 30-second default instead of resolving to `null` and disabling the intended fallback.
+- Failed initial responses clean up their partial local thread and best-effort remote Conversation.
+- Custom model names consistently use the stable `thread_id` foreign key.
+- Migration stubs now have rollback methods; the Conversation ID migration drops its index before its column for SQLite compatibility.
+- Replaced stale Assistants-era facade annotations with the current typed API surface.
+- `listConversationItemsAsRaw()` now forwards list parameters from the facade.
+
+### Quality and documentation
+- Expanded the suite from 17 to 40 tests (99 assertions), including streamed completion/failure/early-end paths, raw streaming, ownership edge cases, custom model names, migration execution/idempotency/failure, factories, rollback, cascade behavior, service-provider validation, and per-request option protection.
+- Rebuilt the README with an explicit Laravel/PHP support matrix, installation and configuration reference, streaming HTTP example, owner isolation guidance, custom models, raw methods, error handling, migration steps, and quality commands.
+- Replaced mutating code-style automation with read-only validation and removed workflows that generated artificial commits or rewrote the changelog after a release.
+
 ## v2.0.1 - 2026-07-03
 
 ### Added
@@ -9,7 +40,7 @@ All notable changes to `laravel-chatbot` will be documented in this file.
 
 ## v2.0.0 - 2026-07-03
 
-The 2.x line migrates from the **OpenAI Assistants API** (shut down on **2026-08-26**) to the **Responses + Conversations API**. This is a breaking change. See [UPGRADE.md](UPGRADE.md).
+The 2.x line migrates from the **OpenAI Assistants API** (scheduled to shut down on **2026-08-26**) to the **Responses + Conversations API**. This is a breaking change. See [UPGRADE.md](UPGRADE.md).
 
 ### Changed
 - **Backbone**: threads/runs/messages → **Responses + Conversations API** (`openai-php/laravel ^0.20`). Responses are synchronous, so the run-polling loop is gone entirely.

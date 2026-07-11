@@ -20,8 +20,11 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('threads', function (Blueprint $table) {
-            $table->dropColumn('remote_conversation_id');
-        });
+        if (Schema::hasColumn('threads', 'remote_conversation_id')) {
+            Schema::table('threads', function (Blueprint $table) {
+                $table->dropIndex(['remote_conversation_id']);
+                $table->dropColumn('remote_conversation_id');
+            });
+        }
     }
 };

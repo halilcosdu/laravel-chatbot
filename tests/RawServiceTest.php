@@ -5,6 +5,9 @@ use OpenAI\Responses\Conversations\ConversationDeletedResponse;
 use OpenAI\Responses\Conversations\ConversationResponse;
 use OpenAI\Responses\Meta\MetaInformation;
 use OpenAI\Responses\Responses\CreateResponse;
+use OpenAI\Responses\Responses\CreateStreamedResponse;
+use OpenAI\Responses\Responses\Streaming\OutputTextDelta;
+use OpenAI\Responses\StreamResponse;
 use OpenAI\Testing\ClientFake;
 
 function rawMeta(): MetaInformation
@@ -41,6 +44,26 @@ function rawResponse(string $text = 'out'): CreateResponse
     ], rawMeta());
 }
 
+function rawStream(): StreamResponse
+{
+    $resource = fopen('php://temp', 'r+');
+    $event = [
+        'type' => 'response.output_text.delta',
+        'content_index' => 0,
+        'delta' => 'chunk',
+        'item_id' => 'msg_raw',
+        'output_index' => 0,
+        'sequence_number' => 1,
+    ];
+
+    fwrite($resource, "event: response.output_text.delta\n");
+    fwrite($resource, 'data: '.json_encode($event, JSON_THROW_ON_ERROR)."\n\n");
+    fwrite($resource, "data: [DONE]\n\n");
+    rewind($resource);
+
+    return CreateStreamedResponse::fake($resource);
+}
+
 it('creates a conversation via raw', function () {
     $service = new RawService(new ClientFake([rawConversation('conv_new')]));
 
@@ -63,4 +86,21 @@ it('creates a response via raw', function () {
     $service = new RawService(new ClientFake([rawResponse('answer')]));
 
     expect($service->createResponseAsRaw(['input' => []])->outputText)->toBe('answer');
+});
+
+it('creates a streamed response via raw', function () {
+    $client = new ClientFake([rawStream()]);
+    $service = new RawService($client);
+
+    $events = iterator_to_array($service->createResponseStreamedAsRaw([
+        'model' => 'gpt-5.4-mini',
+        'input' => 'hello',
+    ]), false);
+
+    expect($events)->toHaveCount(1)
+        ->and($events[0]->response)->toBeInstanceOf(OutputTextDelta::class)
+        ->and($events[0]->response->delta)->toBe('chunk');
+
+    $client->responses()->assertSent(fn (string $method, array $parameters): bool => $method === 'createStreamed'
+        && $parameters['model'] === 'gpt-5.4-mini');
 });
